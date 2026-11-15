@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="同じ長さの2つの文字列に位置ごとに同じシフトを適用し、両方が辞書に載る組を検索します。">
+  <title>共通シフト検索</title>
+  <meta name="theme-color" content="#f2fbf7">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700;800&amp;family=M+PLUS+Rounded+1c:wght@800&amp;display=swap">
+  <link rel="stylesheet" href="./style.css?v=15">
+  <script type="module" src="./app.mjs?v=14"></script>
+</head>
+<body>
+  <main class="container">
+    <header class="intro">
+      <h1>共通シフト検索</h1>
+      <p>同じ位置を同じ数だけずらして、2つの単語ができる組を探します。</p>
+    </header>
+
+    <div class="workspace">
+      <form id="search-form" class="panel search-panel">
+        <div class="section-head">
+          <h2>検索条件</h2>
+          <button type="button" id="swap" class="secondary swap" disabled>
+            <span aria-hidden="true">↔</span> 左右を入れ替え
+          </button>
+        </div>
+        <div class="input-grid">
+          <div class="field field-a">
+            <div class="field-label">
+              <label for="text-a">文字列1</label>
+              <span id="language-a" class="detected" hidden></span>
+            </div>
+            <div class="field-body">
+              <input type="text" id="text-a" aria-describedby="input-meta" placeholder="ここに文字列を入力" required spellcheck="false" autocomplete="off" autocapitalize="off">
+              <fieldset id="dict-a" class="field-dictionaries">
+                <legend><span class="sr-only">文字列1の</span>辞書</legend>
+                <div class="dict-group" data-language="ja"></div>
+                <div class="dict-group" data-language="en"></div>
+              </fieldset>
+            </div>
+          </div>
+          <div class="field field-b">
+            <div class="field-label">
+              <label for="text-b">文字列2</label>
+              <span id="language-b" class="detected" hidden></span>
+            </div>
+            <div class="field-body">
+              <input type="text" id="text-b" aria-describedby="input-meta" placeholder="ここに文字列を入力" required spellcheck="false" autocomplete="off" autocapitalize="off">
+              <fieldset id="dict-b" class="field-dictionaries">
+                <legend><span class="sr-only">文字列2の</span>辞書</legend>
+                <div class="dict-group" data-language="ja"></div>
+                <div class="dict-group" data-language="en"></div>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+        <p class="input-hint" id="input-meta" aria-live="polite">同じ長さのかな・英字を入力してください。</p>
+        <div class="search-controls">
+          <fieldset class="form-section">
+            <legend>シフト範囲</legend>
+            <div class="range-controls">
+              <div class="range-row">
+                <input id="min" type="number" aria-label="シフトの最小値" min="-23" max="23" step="1" value="-23" required>
+                <span aria-hidden="true">〜</span>
+                <input id="max" type="number" aria-label="シフトの最大値" min="-23" max="23" step="1" value="23" required>
+              </div>
+              <div class="presets" role="group" aria-label="シフト範囲のプリセット">
+                <button type="button" data-range="5" aria-pressed="false">±5</button>
+                <button type="button" data-range="10" aria-pressed="false">±10</button>
+                <button type="button" data-range="23" aria-pressed="true">±23</button>
+              </div>
+            </div>
+          </fieldset>
+          <label class="check-row">
+            <input type="checkbox" id="loop">
+            <span>ループを許容</span>
+          </label>
+          <button type="submit" id="search" class="primary">検索</button>
+        </div>
+        <p class="error" id="error" role="alert" hidden></p>
+      </form>
+
+      <section class="panel results" aria-labelledby="result-heading">
+        <div class="results-header">
+          <div>
+            <h2 id="result-heading">検索結果</h2>
+            <p id="status" aria-live="polite" hidden></p>
+          </div>
+          <div class="result-tools" id="result-tools" hidden>
+            <input id="result-filter" type="search" aria-label="結果を単語で絞り込む" placeholder="単語で絞り込む" autocomplete="off" spellcheck="false">
+            <button type="button" id="download" class="secondary">全件をTSV保存</button>
+          </div>
+        </div>
+        <p id="stale" class="stale" role="status" hidden>入力または設定が変更されています。検索すると結果を更新します。</p>
+        <p id="empty" class="empty" role="status">検索すると、単語の組と共通シフトが表示されます。</p>
+        <div id="columns" class="result-grid column-labels" aria-hidden="true" hidden>
+          <span class="column-a">文字列1の結果</span>
+          <span class="column-b">文字列2の結果</span>
+          <span>共通シフト</span>
+          <span></span>
+        </div>
+        <div id="results"></div>
+        <div id="results-footer" class="results-footer" hidden>
+          <button type="button" id="load-more" class="secondary">さらに表示</button>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
